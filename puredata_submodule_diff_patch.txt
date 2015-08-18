@@ -1,0 +1,208 @@
+diff --git a/extra/bob~/bob~.c b/extra/bob~/bob~.c
+index d28371c..faf5d17 100644
+--- a/extra/bob~/bob~.c
++++ b/extra/bob~/bob~.c
+@@ -2,7 +2,7 @@
+ 
+ /* copyright 2015 Miller Puckette - BSD license */
+ 
+-#include "m_pd.h"
++#include "../../src/m_pd.h"
+ #include <math.h>
+ #define DIM 4
+ #define FLOAT double
+diff --git a/extra/choice/choice.c b/extra/choice/choice.c
+index 9b8bfb1..828b276 100644
+--- a/extra/choice/choice.c
++++ b/extra/choice/choice.c
+@@ -10,7 +10,7 @@ IN CONNECTION WITH THIS SOFTWARE.
+ This file is downloadable from http://www.crca.ucsd.edu/~msp .
+ */
+ 
+-#include "m_pd.h"
++#include "../../src/m_pd.h"
+ #include <math.h>
+ static t_class *choice_class;
+ #define DIMENSION 10
+diff --git a/src/d_arithmetic.c b/src/d_arithmetic.c
+index 07ff6ae..7db65e9 100644
+--- a/src/d_arithmetic.c
++++ b/src/d_arithmetic.c
+@@ -136,7 +136,7 @@ static void plus_setup(void)
+     CLASS_MAINSIGNALIN(plus_class, t_plus, x_f);
+     class_sethelpsymbol(plus_class, gensym("sigbinops"));
+     scalarplus_class = class_new(gensym("+~"), 0, 0,
+-        sizeof(t_scalarplus), 0, 0);
++        sizeof(t_scalarplus), 0, A_NULL);
+     CLASS_MAINSIGNALIN(scalarplus_class, t_scalarplus, x_f);
+     class_addmethod(scalarplus_class, (t_method)scalarplus_dsp,
+         gensym("dsp"), A_CANT, 0);
+@@ -266,7 +266,7 @@ static void minus_setup(void)
+     class_addmethod(minus_class, (t_method)minus_dsp, gensym("dsp"), A_CANT, 0);
+     class_sethelpsymbol(minus_class, gensym("sigbinops"));
+     scalarminus_class = class_new(gensym("-~"), 0, 0,
+-        sizeof(t_scalarminus), 0, 0);
++        sizeof(t_scalarminus), 0, A_NULL);
+     CLASS_MAINSIGNALIN(scalarminus_class, t_scalarminus, x_f);
+     class_addmethod(scalarminus_class, (t_method)scalarminus_dsp,
+         gensym("dsp"), A_CANT, 0);
+@@ -397,7 +397,7 @@ static void times_setup(void)
+     class_addmethod(times_class, (t_method)times_dsp, gensym("dsp"), A_CANT, 0);
+     class_sethelpsymbol(times_class, gensym("sigbinops"));
+     scalartimes_class = class_new(gensym("*~"), 0, 0,
+-        sizeof(t_scalartimes), 0, 0);
++        sizeof(t_scalartimes), 0, A_NULL);
+     CLASS_MAINSIGNALIN(scalartimes_class, t_scalartimes, x_f);
+     class_addmethod(scalartimes_class, (t_method)scalartimes_dsp,
+         gensym("dsp"), A_CANT, 0);
+@@ -539,7 +539,7 @@ static void over_setup(void)
+     class_addmethod(over_class, (t_method)over_dsp, gensym("dsp"), A_CANT, 0);
+     class_sethelpsymbol(over_class, gensym("sigbinops"));
+     scalarover_class = class_new(gensym("/~"), 0, 0,
+-        sizeof(t_scalarover), 0, 0);
++        sizeof(t_scalarover), 0, A_NULL);
+     CLASS_MAINSIGNALIN(scalarover_class, t_scalarover, x_f);
+     class_addmethod(scalarover_class, (t_method)scalarover_dsp,
+         gensym("dsp"), A_CANT, 0);
+@@ -681,7 +681,7 @@ static void max_setup(void)
+     class_addmethod(max_class, (t_method)max_dsp, gensym("dsp"), A_CANT, 0);
+     class_sethelpsymbol(max_class, gensym("sigbinops"));
+     scalarmax_class = class_new(gensym("max~"), 0, 0,
+-        sizeof(t_scalarmax), 0, 0);
++        sizeof(t_scalarmax), 0, A_NULL);
+     CLASS_MAINSIGNALIN(scalarmax_class, t_scalarmax, x_f);
+     class_addmethod(scalarmax_class, (t_method)scalarmax_dsp,
+         gensym("dsp"), A_CANT, 0);
+@@ -823,7 +823,7 @@ static void min_setup(void)
+     class_addmethod(min_class, (t_method)min_dsp, gensym("dsp"), A_CANT, 0);
+     class_sethelpsymbol(min_class, gensym("sigbinops"));
+     scalarmin_class = class_new(gensym("min~"), 0, 0,
+-        sizeof(t_scalarmin), 0, 0);
++        sizeof(t_scalarmin), 0, A_NULL);
+     CLASS_MAINSIGNALIN(scalarmin_class, t_scalarmin, x_f);
+     class_addmethod(scalarmin_class, (t_method)scalarmin_dsp,
+         gensym("dsp"), A_CANT, 0);
+diff --git a/src/d_osc.c b/src/d_osc.c
+index 61f0504..49678f7 100644
+--- a/src/d_osc.c
++++ b/src/d_osc.c
+@@ -43,7 +43,7 @@
+ # define LOWOFFSET 1    /* word offset to find LSB */
+ #endif
+ 
+-union tabfudge
++union tabfudge_osc
+ {
+     double tf_d;
+     int32_t tf_i[2];
+@@ -80,7 +80,7 @@ static t_int *phasor_perform(t_int *w)
+     t_float *out = (t_float *)(w[3]);
+     int n = (int)(w[4]);
+     double dphase = x->x_phase + (double)UNITBIT32;
+-    union tabfudge tf;
++    union tabfudge_osc tf;
+     int normhipart;
+     float conv = x->x_conv;
+ 
+@@ -152,7 +152,7 @@ static t_int *cos_perform(t_int *w)
+     float *tab = cos_table, *addr, f1, f2, frac;
+     double dphase;
+     int normhipart;
+-    union tabfudge tf;
++    union tabfudge_osc tf;
+     
+     tf.tf_d = UNITBIT32;
+     normhipart = tf.tf_i[HIOFFSET];
+@@ -203,7 +203,7 @@ static void cos_maketable(void)
+ {
+     int i;
+     float *fp, phase, phsinc = (2. * 3.14159) / COSTABSIZE;
+-    union tabfudge tf;
++    union tabfudge_osc tf;
+     
+     if (cos_table) return;
+     cos_table = (float *)getbytes(sizeof(float) * (COSTABSIZE+1));
+@@ -260,7 +260,7 @@ static t_int *osc_perform(t_int *w)
+     float *tab = cos_table, *addr, f1, f2, frac;
+     double dphase = x->x_phase + UNITBIT32;
+     int normhipart;
+-    union tabfudge tf;
++    union tabfudge_osc tf;
+     float conv = x->x_conv;
+     
+     tf.tf_d = UNITBIT32;
+@@ -390,7 +390,7 @@ static t_int *sigvcf_perform(t_int *w)
+     float *tab = cos_table, *addr, f1, f2, frac;
+     double dphase;
+     int normhipart, tabindex;
+-    union tabfudge tf;
++    union tabfudge_osc tf;
+     
+     tf.tf_d = UNITBIT32;
+     normhipart = tf.tf_i[HIOFFSET];
+diff --git a/src/m_pd.h b/src/m_pd.h
+index 28aaa97..eda6c30 100644
+--- a/src/m_pd.h
++++ b/src/m_pd.h
+@@ -8,6 +8,7 @@
+ extern "C" {
+ #endif
+ 
++#define HAVE_ALLOCA_H 1
+ #define PD_MAJOR_VERSION 0
+ #define PD_MINOR_VERSION 46
+ #define PD_BUGFIX_VERSION 6
+diff --git a/src/s_audio_dummy.c b/src/s_audio_dummy.c
+index 5ea1dd9..ca8d4db 100644
+--- a/src/s_audio_dummy.c
++++ b/src/s_audio_dummy.c
+@@ -5,7 +5,7 @@
+  * WARRANTIES, see the file, "LICENSE.txt," in this distribution.
+  */
+ 
+-#ifdef USEAPI_DUMMY
++//#ifdef USEAPI_DUMMY
+ 
+ #include <stdio.h>
+ 
+@@ -33,5 +33,5 @@ void dummy_listdevs() {
+   // do nothing
+ }
+ 
+-#endif
++//#endif
+ 
+diff --git a/src/s_file.c b/src/s_file.c
+index 17d19de..1bed01a 100644
+--- a/src/s_file.c
++++ b/src/s_file.c
+@@ -16,7 +16,7 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <errno.h>
+-#ifdef HAVE_UNISTD_H
++#if defined (HAVE_UNISTD_H) || defined (JUCE_APP_VERSION)
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+diff --git a/src/s_stuff.h b/src/s_stuff.h
+index 7dd6a6a..8f01023 100644
+--- a/src/s_stuff.h
++++ b/src/s_stuff.h
+@@ -6,6 +6,10 @@
+ 
+ /* NOTE: this file describes Pd implementation details which may change
+ in future releases.  The public (stable) API is in m_pd.h. */  
++#ifndef PUREDATA_S_STUFF_H
++#define PUREDATA_S_STUFF_H
++
++
+ 
+ /* in s_path.c */
+ 
+@@ -409,3 +413,5 @@ EXTERN void inmidi_polyaftertouch(int portno,
+                                   int value);
+ /* } jsarlo */
+ extern t_widgetbehavior text_widgetbehavior;
++
++#endif

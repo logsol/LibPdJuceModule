@@ -1,0 +1,143 @@
+diff --git a/libpd.xcodeproj/xcshareddata/xcschemes/libpd-ios.xcscheme b/libpd.xcodeproj/xcshareddata/xcschemes/libpd-ios.xcscheme
+index 914578f..18fadd7 100644
+--- a/libpd.xcodeproj/xcshareddata/xcschemes/libpd-ios.xcscheme
++++ b/libpd.xcodeproj/xcshareddata/xcschemes/libpd-ios.xcscheme
+@@ -22,21 +22,31 @@
+       </BuildActionEntries>
+    </BuildAction>
+    <TestAction
+-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.GDB"
+-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
++      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
++      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+       shouldUseLaunchSchemeArgsEnv = "YES"
+       buildConfiguration = "Debug">
+       <Testables>
+       </Testables>
+    </TestAction>
+    <LaunchAction
+-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.GDB"
+-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
++      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
++      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+       launchStyle = "0"
+       useCustomWorkingDirectory = "NO"
+       buildConfiguration = "Debug"
++      ignoresPersistentStateOnLaunch = "NO"
+       debugDocumentVersioning = "YES"
+       allowLocationSimulation = "YES">
++      <MacroExpansion>
++         <BuildableReference
++            BuildableIdentifier = "primary"
++            BlueprintIdentifier = "D2AAC07D0554694100DB518D"
++            BuildableName = "libpd-ios.a"
++            BlueprintName = "libpd-ios"
++            ReferencedContainer = "container:libpd.xcodeproj">
++         </BuildableReference>
++      </MacroExpansion>
+       <AdditionalOptions>
+       </AdditionalOptions>
+    </LaunchAction>
+diff --git a/libpd_wrapper/s_libpdmidi.c b/libpd_wrapper/s_libpdmidi.c
+index b1ff353..5a33735 100644
+--- a/libpd_wrapper/s_libpdmidi.c
++++ b/libpd_wrapper/s_libpdmidi.c
+@@ -2,8 +2,8 @@
+  * For information on usage and redistribution, and for a DISCLAIMER OF ALL
+  * WARRANTIES, see the file, "LICENSE.txt," in this distribution.  */
+ 
+-#include "m_pd.h"
+-#include "s_stuff.h"
++#include "../pure-data/src/m_pd.h"
++#include "../pure-data/src/s_stuff.h"
+ #include "z_libpd.h"
+ #include "z_hooks.h"
+ 
+diff --git a/libpd_wrapper/util/z_print_util.h b/libpd_wrapper/util/z_print_util.h
+index 9ea6385..2aa7433 100644
+--- a/libpd_wrapper/util/z_print_util.h
++++ b/libpd_wrapper/util/z_print_util.h
+@@ -9,7 +9,7 @@
+ #ifndef __Z_PRINT_UTIL_H__
+ #define __Z_PRINT_UTIL_H__
+ 
+-#include "z_libpd.h"
++#include "../z_libpd.h"
+ 
+ #ifdef __cplusplus
+ extern "C"
+diff --git a/libpd_wrapper/util/z_queued.h b/libpd_wrapper/util/z_queued.h
+index 17157dd..f2ec110 100644
+--- a/libpd_wrapper/util/z_queued.h
++++ b/libpd_wrapper/util/z_queued.h
+@@ -8,7 +8,7 @@
+ #ifndef __Z_QUEUED_H__
+ #define __Z_QUEUED_H__
+ 
+-#include "z_libpd.h"
++#include "../z_libpd.h"
+ 
+ #ifdef __cplusplus
+ extern "C"
+diff --git a/libpd_wrapper/x_libpdreceive.c b/libpd_wrapper/x_libpdreceive.c
+index f3e3c9d..001133e 100644
+--- a/libpd_wrapper/x_libpdreceive.c
++++ b/libpd_wrapper/x_libpdreceive.c
+@@ -6,7 +6,7 @@
+  */
+ 
+ #include <stdio.h>
+-#include "m_pd.h"
++#include "../pure-data/src/m_pd.h"
+ #include "x_libpdreceive.h"
+ #include "z_libpd.h"
+ #include "z_hooks.h"
+diff --git a/libpd_wrapper/x_libpdreceive.h b/libpd_wrapper/x_libpdreceive.h
+index a5e86d3..be45181 100644
+--- a/libpd_wrapper/x_libpdreceive.h
++++ b/libpd_wrapper/x_libpdreceive.h
+@@ -8,7 +8,7 @@
+ #ifndef __X_LIBPDREC_H__
+ #define __X_LIBPDREC_H__
+ 
+-#include "m_pd.h"
++//#include "m_pd.h"
+ 
+ void libpdreceive_setup(void);
+ void *libpdreceive_new(t_symbol *);
+diff --git a/libpd_wrapper/z_libpd.c b/libpd_wrapper/z_libpd.c
+index f48dcc9..916425f 100644
+--- a/libpd_wrapper/z_libpd.c
++++ b/libpd_wrapper/z_libpd.c
+@@ -16,9 +16,9 @@
+ #include "z_libpd.h"
+ #include "x_libpdreceive.h"
+ #include "z_hooks.h"
+-#include "s_stuff.h"
+-#include "m_imp.h"
+-#include "g_all_guis.h"
++#include "../pure-data/src/s_stuff.h"
++#include "../pure-data/src/m_imp.h"
++#include "../pure-data/src/g_all_guis.h"
+ 
+ #if PD_MINOR_VERSION < 46
+ # define HAVE_SCHED_TICK_ARG
+diff --git a/libpd_wrapper/z_libpd.h b/libpd_wrapper/z_libpd.h
+index 00d164a..c3be630 100644
+--- a/libpd_wrapper/z_libpd.h
++++ b/libpd_wrapper/z_libpd.h
+@@ -16,7 +16,7 @@ extern "C"
+ {
+ #endif
+ 
+-#include "m_pd.h"
++#include "../pure-data/src/m_pd.h"
+ 
+ EXTERN int libpd_init(void);
+ EXTERN void libpd_clear_search_path(void);
+diff --git a/pure-data b/pure-data
+--- a/pure-data
++++ b/pure-data
+@@ -1 +1 @@
+-Subproject commit 905695a350bf44d906fbb8cde905fa0b81d12b57
++Subproject commit 905695a350bf44d906fbb8cde905fa0b81d12b57-dirty
